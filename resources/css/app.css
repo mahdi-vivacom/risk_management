@@ -1,0 +1,10 @@
+@import url('../theme/dist/css/tabler.min.css');
+@import url('../theme/dist/css/tabler-flags.min.css');
+@import url('../theme/dist/css/tabler-payments.min.css');
+@import url('../theme/dist/css/tabler-vendors.min.css');
+@import url('../theme/dist/css/demo.min.css');
+@import url('../theme/dist/css/remixicon.css');
+
+/*@tailwind base;*/
+/*@tailwind components;*/
+/*@tailwind utilities;*/

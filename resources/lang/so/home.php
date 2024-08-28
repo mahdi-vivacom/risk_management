@@ -1,0 +1,20 @@
+<?php
+return [
+    'hero_h1' => 'Dir & Hel Lacag',
+    'hero_h2' => 'Si degdeg ah, ammaan ah oo fudud ula PayOnTime.',
+    'sendingFrom' => 'Waxaan ka soo diraya',
+    'sendingTo' => 'Ku socota qof ku jecel',
+    'btnGetStarted' => 'Bilow',
+    'whyChooseHidmona' => 'Maxaad u dooranaysaa Xawaaladda Hidmona?',
+    'fastNsecure' => 'Degdeg & Ammaan',
+    'fastNsecure_p' => 'Lacag u dir qoyska & asxaabta daqiiqado gudahood.',
+    'geoCoverage' => 'Daboolida Juqraafiyeed oo Buuxa',
+    'geoCoverage_p' => 'Waxaan leenahay goobo lacag-bixineed dhammaan magaalooyinka waaweyn.',
+    'lowTransferFee' => 'Kharashka Kala iibsiga Hoose',
+    'lowTransferFee_p' => 'Lacago cadaalad ah oo ku baxa adeegyadaada xawilaada.',
+    'servicesHeading' => 'Waxaan bixinaa adeegyada soo socda',
+    'service_1' => 'Xawaaladaha Caalamiga ah',
+    'service_2' => 'Lacag caddaan ah iyo xisaabaadka xawaaladaha',
+    'service_3' => 'Xariirka khadka tooska ah iyo app-ka moobilka si fudud loo isticmaalo',
+    'service_4' => 'Xawaaladaha Mobilka',
+];

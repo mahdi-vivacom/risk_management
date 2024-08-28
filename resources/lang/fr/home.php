@@ -1,0 +1,20 @@
+<?php
+return [
+    'hero_h1' => 'Envoyer et recevoir de l\'argent',
+    'hero_h2' => 'Rapidement, en toute sécurité et facilement avec PayOnTime.',
+    'sendingFrom' => 'J\'envoie depuis',
+    'sendingTo' => 'À quelqu\'un de cher en',
+    'btnGetStarted' => 'Commencer',
+    'whyChooseHidmona' => 'Pourquoi choisir le transfert d\'argent PayOnTime?',
+    'fastNsecure' => 'Rapide et sécurisé',
+    'fastNsecure_p' => 'Envoyez de l\'argent à la famille et aux amis en quelques minutes.',
+    'geoCoverage' => 'Couverture géographique complète',
+    'geoCoverage_p' => 'Nous avons des points de paiement dans toutes les grandes villes.',
+    'lowTransferFee' => 'Frais de transfert bas',
+    'lowTransferFee_p' => 'Frais équitables pour vos services de transfert d\'argent.',
+    'servicesHeading' => 'Nous fournissons les services suivants',
+    'service_1' => 'Transfert d\'argent international',
+    'service_2' => 'Virements en espèces et sur compte',
+    'service_3' => 'Portail en ligne et application mobile pour plus de facilité',
+    'service_4' => 'Transfert d\'argent mobile',
+];
