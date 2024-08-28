@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $user = User::firstOrCreate (
             [ 'email' => 'systemadmin@gmail.com' ],
-            [ 
+            [
                 'name'     => 'System Admin User',
                 'password' => Hash::make ( '12345678' ),
             ],
@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
 
         $role = Role::firstOrCreate (
             [ 'name' => 'systemadmin' ],
-            [ 
+            [
                 'guard_name'   => 'web',
                 'display_name' => 'System Admin',
             ],
@@ -37,15 +37,15 @@ class DatabaseSeeder extends Seeder
 
         $user->assignRole ( [ $role->id ] );
 
-        $array = [ 
-            [ 
+        $array = [
+            [
                 'name'         => 'superadmin',
                 'guard_name'   => 'web',
                 'display_name' => 'Super Admin',
                 'created_at'   => Carbon::now (),
                 'updated_at'   => Carbon::now (),
             ],
-            [ 
+            [
                 'name'         => 'admin',
                 'guard_name'   => 'web',
                 'display_name' => 'Admin',
@@ -55,5 +55,9 @@ class DatabaseSeeder extends Seeder
         ];
         Role::insertOrIgnore ( $array );
 
+        $this->call([
+            MenuSeeder::class,
+            PermissionsSeeder::class,
+        ]);
     }
 }
