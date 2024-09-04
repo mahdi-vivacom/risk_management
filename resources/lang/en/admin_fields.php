@@ -202,6 +202,7 @@ return [
     'active_status' => 'Status activated',
     'inactive_status' => 'Status inactivated',
     'professional_skill' => 'Category of Professionals',
+    'color' => 'Color',
 
 
 

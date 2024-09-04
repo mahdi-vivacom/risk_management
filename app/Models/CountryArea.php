@@ -11,10 +11,11 @@ class CountryArea extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [ 
+    protected $fillable = [
         'name',
         'country_id',
         'coordinates',
+        'color',
         'timezone',
         'status',
     ];
@@ -36,7 +37,7 @@ class CountryArea extends Model
 
             $skillAreas = [];
             foreach ( $skillIds as $skillId ) {
-                $skillAreas[] = [ 
+                $skillAreas[] = [
                     'country_area_id' => $this->id,
                     'skill_id'        => $skillId,
                     'created_at'      => now (),
@@ -52,5 +53,5 @@ class CountryArea extends Model
     {
         return $this->hasMany ( SkillArea::class);
     }
-    
+
 }

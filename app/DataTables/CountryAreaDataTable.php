@@ -36,6 +36,9 @@ class CountryAreaDataTable extends DataTable
             ->editColumn('country', function ($query) {
                 return $query->Country->name ?? '---';
             })
+            ->editColumn('color', function ($query) {
+                return !empty($query->color) ? '<span style="display:inline-block; width:20px; height:20px; background-color:' . $query->color . '; border: 1px solid #000;"></span>' : '';
+            })
             ->filterColumn('country', function ($query, $keyword) {
                 $query->whereHas('Country', function ($query) use ($keyword) {
                     $query->where('name', 'like', "%{$keyword}%");
@@ -51,7 +54,7 @@ class CountryAreaDataTable extends DataTable
                     return $a;
                 }
             })
-            ->rawColumns(['status', 'action'])
+            ->rawColumns(['status', 'color', 'action'])
             ->setRowId('id');
     }
 
@@ -93,8 +96,9 @@ class CountryAreaDataTable extends DataTable
         return [
             Column::make('serial_number')->title(trans('admin_fields.serial_number')),
             Column::make('name')->title(trans('admin_fields.area')),
-            Column::make('country')->title(trans('admin_fields.country')),
-            Column::make('timezone')->title(trans('admin_fields.timezone')),
+            // Column::make('country')->title(trans('admin_fields.country')),
+            // Column::make('timezone')->title(trans('admin_fields.timezone')),
+            Column::make('color')->title(trans('admin_fields.color')),
             Column::make('status'),
             Column::computed('action')
                 ->exportable(false)

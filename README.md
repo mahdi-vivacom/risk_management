@@ -48,7 +48,7 @@ storage - to store log files
 
 ### 8. Firebase Credentials
 
-Create firebase_credential.json file with firebase credentials
+Create firebase_credential.json file with firebase credentials and also database configuration table with necessary details
 
 ### 9. Run this route after base url for clearing cache
 

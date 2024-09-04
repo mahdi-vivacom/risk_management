@@ -4,7 +4,8 @@
 @section('content')
     <style>
         .page-login::before {
-            background-image: url("{{ asset('backend/assets/img/login-bg.png') }}");
+            /* background-image: url("{{ asset('backend/assets/img/login-bg.png') }}"); */
+            background-color: skyblue;
         }
 
         .page-dark.layout-full::before {
@@ -37,11 +38,12 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-center pt-5">
                                 <a href="{{ url('/') }}" class="logo d-flex align-items-center w-auto">
-                                    <img src="{{ asset('/backend') }}/assets/img/xr_logoo.png" alt="">
+                                    {{-- <img src="{{ asset('/backend') }}/assets/img/xr_logoo.png" alt=""> --}}
+                                    <span class="d-none d-lg-block">{{ config('app.name') }}</span>
                                 </a>
                             </div>
 
-                            <h5 class="card-title text-center fs-4">Login to Your Account</h5>
+                            {{-- <h5 class="card-title text-center fs-4">Login to Your Account</h5> --}}
 
                             <form class="row g-3 needs-validation" novalidate method="POST" action="{{ route('login') }}">
                                 @csrf

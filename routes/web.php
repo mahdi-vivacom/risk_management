@@ -48,7 +48,7 @@ Route::get ( '/', function () {
     }
 } );
 
-Route::get ( '/dashboard', [ HomeController::class, 'dashboard' ] )->name ( 'dashboard' )->middleware ( [ 'auth', 'verified', 'ensure_password_reset' ] );
+Route::get ( '/dashboard', [ HomeController::class, 'index' ] )->name ( 'dashboard' )->middleware ( [ 'auth', 'verified', 'ensure_password_reset' ] );
 
 Route::middleware ( [ 'auth' ] )->group ( function () {
     Route::get ( '/profile', [ ProfileController::class, 'edit' ] )->name ( 'profile.edit' );

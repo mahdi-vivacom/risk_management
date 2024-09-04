@@ -14,67 +14,71 @@ class CountryAreaController extends Controller
     protected $index;
     protected $indexRoute;
 
-    public function __construct ()
+    public function __construct()
     {
-        $this->index      = 'Country Area';
+        $this->index = 'Country Area';
         $this->indexRoute = 'country-areas.index';
     }
     /**
      * Display a listing of the resource.
      */
-    public function index ( CountryAreaDataTable $dataTable )
+    public function index(CountryAreaDataTable $dataTable)
     {
         $data = [
             'title' => $this->index . ' List',
         ];
-        return $dataTable->render ( 'backend.common.index', $data );
+        return $dataTable->render('backend.common.index', $data);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create ()
+    public function create()
     {
         $data = [
-            'title'     => 'Create ' . $this->index,
-            'countries' => Country::where ( 'status', 1 )->get (),
-            'timezones' => \DateTimeZone::listIdentifiers (),
-            'config'    => Configuration::where ( 'status', 1 )->first (),
-            'skills'    => Skill::where ( 'status', 1 )->get (),
+            'title' => 'Create ' . $this->index,
+            // 'countries' => Country::where ( 'status', 1 )->get (),
+            // 'timezones' => \DateTimeZone::listIdentifiers (),
+            'config' => Configuration::where('status', 1)->first(),
+            // 'skills'    => Skill::where ( 'status', 1 )->get (),
         ];
-        return view ( 'backend.countryArea.create', $data );
+        return view('backend.countryArea.create', $data);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store ( Request $request )
+    public function store(Request $request)
     {
-        $validatedData = $request->validate ( [
-            'name'       => 'required',
-            'country_id' => 'required|integer|exists:countries,id',
-            'lat'        => 'required',
-            'timezone'   => 'required|in:' . implode ( ',', \DateTimeZone::listIdentifiers () ),
-        ] );
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'color' => 'required',
+            // 'country_id' => 'required|integer|exists:countries,id',
+            'lat' => 'required',
+            // 'timezone'   => 'required|in:' . implode ( ',', \DateTimeZone::listIdentifiers () ),
+        ]);
 
-        $model              = new CountryArea();
-        $model->name        = $validatedData[ 'name' ];
-        $model->country_id  = $validatedData[ 'country_id' ];
-        $model->coordinates = $validatedData[ 'lat' ];
-        $model->timezone    = $validatedData[ 'timezone' ];
-        $model->save ();
+        $country = Country::where('iso_code_2', 'SO')->first();
 
-        if ( !empty ( $request->skill ) ) {
-            $model->insertSkillAreas ( $request->skill );
+        $model = new CountryArea();
+        $model->name = $validatedData['name'];
+        $model->color = $validatedData['color'];
+        $model->country_id = $country->id;
+        $model->coordinates = $validatedData['lat'];
+        // $model->timezone    = $validatedData[ 'timezone' ];
+        $model->save();
+
+        if (!empty($request->skill)) {
+            $model->insertSkillAreas($request->skill);
         }
 
-        return redirect ()->route ( $this->indexRoute )->with ( 'success', $this->index . ' ' .  trans('admin_fields.data_store_message') );
+        return redirect()->route($this->indexRoute)->with('success', $this->index . ' ' . trans('admin_fields.data_store_message'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show ( CountryArea $countryArea )
+    public function show(CountryArea $countryArea)
     {
         return $countryArea;
     }
@@ -82,63 +86,65 @@ class CountryAreaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit ( CountryArea $countryArea )
+    public function edit(CountryArea $countryArea)
     {
         $data = [
-            'title'       => 'Edit ' . $this->index,
+            'title' => 'Edit ' . $this->index,
             'countryArea' => $countryArea,
-            'countries'   => Country::where ( 'status', 1 )->get (),
-            'timezones'   => \DateTimeZone::listIdentifiers (),
-            'config'      => Configuration::where ( 'status', 1 )->first (),
-            'skills'      => Skill::where ( 'status', 1 )->get (),
+            // 'countries'   => Country::where ( 'status', 1 )->get (),
+            // 'timezones'   => \DateTimeZone::listIdentifiers (),
+            'config' => Configuration::where('status', 1)->first(),
+            // 'skills'      => Skill::where ( 'status', 1 )->get (),
         ];
-        return view ( 'backend.countryArea.edit', $data );
+        return view('backend.countryArea.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update ( Request $request, CountryArea $countryArea )
+    public function update(Request $request, CountryArea $countryArea)
     {
-        $validatedData = $request->validate ( [
-            'name'       => 'required',
-            'country_id' => 'required|integer|exists:countries,id',
-            'lat'        => 'nullable',
-            'timezone'   => 'required|in:' . implode ( ',', \DateTimeZone::listIdentifiers () ),
-        ] );
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'color' => 'required',
+            // 'country_id' => 'required|integer|exists:countries,id',
+            'lat' => 'nullable',
+            // 'timezone'   => 'required|in:' . implode ( ',', \DateTimeZone::listIdentifiers () ),
+        ]);
 
         $updateData = [
-            'name'       => $validatedData[ 'name' ],
-            'country_id' => $validatedData[ 'country_id' ],
-            'lat'        => $validatedData[ 'lat' ],
-            'timezone'   => $validatedData[ 'timezone' ],
+            'name' => $validatedData['name'],
+            'color' => $validatedData['color'],
+            // 'country_id' => $validatedData[ 'country_id' ],
+            'lat' => $validatedData['lat'],
+            // 'timezone'   => $validatedData[ 'timezone' ],
         ];
 
-        if ( !empty ( $validatedData[ 'lat' ] ) ) {
-            $updateData[ 'coordinates' ] = $validatedData[ 'lat' ];
+        if (!empty($validatedData['lat'])) {
+            $updateData['coordinates'] = $validatedData['lat'];
         }
 
-        $countryArea->update ( $updateData );
+        $countryArea->update($updateData);
 
-        if ( !empty ( $request->skill ) ) {
-            $countryArea->insertSkillAreas ( $request->skill );
+        if (!empty($request->skill)) {
+            $countryArea->insertSkillAreas($request->skill);
         }
-        return redirect ()->route ( $this->indexRoute )->with ( 'success', $this->index . ' ' .  trans('admin_fields.data_update_message') );
+        return redirect()->route($this->indexRoute)->with('success', $this->index . ' ' . trans('admin_fields.data_update_message'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy ( CountryArea $countryArea )
+    public function destroy(CountryArea $countryArea)
     {
-        $countryArea->delete ();
-        if ( request ()->ajax () ) {
-            return response ()->json ( [
-                'type'    => 'success',
-                'message' => $this->index . ' ' .  trans('admin_fields.data_delete_message'),
-            ] );
+        $countryArea->delete();
+        if (request()->ajax()) {
+            return response()->json([
+                'type' => 'success',
+                'message' => $this->index . ' ' . trans('admin_fields.data_delete_message'),
+            ]);
         }
-        return redirect ()->route ( $this->indexRoute )->with ( 'success', $this->index . ' ' .  trans('admin_fields.data_delete_message') );
+        return redirect()->route($this->indexRoute)->with('success', $this->index . ' ' . trans('admin_fields.data_delete_message'));
     }
 
     public function getCountryArea($id)

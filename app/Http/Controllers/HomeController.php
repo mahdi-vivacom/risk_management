@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Client;
+use App\Models\Configuration;
 use App\Models\Country;
 use App\Models\CountryArea;
 use App\Models\Professional;
@@ -24,8 +25,12 @@ class HomeController extends Controller
     public function index()
     {
         if (Auth::check()) {
-            $title = trans('admin_fields.dashboard');
-            return view('backend.index', compact('title'));
+            $data = [
+                'title' => trans('admin_fields.dashboard'),
+                'config' => Configuration::first(),
+                'regions' => CountryArea::where('status', 1)->where('country_id', 1)->get(),
+            ];
+            return view('backend.index', $data);
         } else {
             return view('frontend.auth.login');
         }
