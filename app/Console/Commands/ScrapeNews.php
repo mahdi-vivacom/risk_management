@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class ScrapeNews extends Command
 {
     protected $signature = 'scrape:news';
-    protected $description = 'Scrape news articles from a website and store them in the database';
+    protected $description = 'Scrape news articles from multiple websites and store them in the database';
 
     public function __construct()
     {
@@ -22,96 +22,105 @@ class ScrapeNews extends Command
     public function handle()
     {
         $client = new Client();
-        $url = env('NEWS_SITE_URL', 'https://www.bbc.com/');
+        $urls = explode(',', env('NEWS_SITE_URL', 'https://www.bbc.com,https://edition.cnn.com/'));
 
-        try {
-            $response = $client->request('GET', $url, [
-                'verify' => false, // Disable SSL verification (not recommended for production)
-            ]);
+        foreach ($urls as $url) {
+            $url = trim($url);
 
-            $html = $response->getBody()->getContents();
-        } catch (\Exception $e) {
-            $this->error("Failed to fetch data: " . $e->getMessage());
-            return;
-        }
-
-        // Load HTML into DOMDocument
-        $dom = new DOMDocument();
-        @$dom->loadHTML($html); // Suppress warnings from malformed HTML
-
-        // Create a new DOMXPath object
-        $xpath = new DOMXPath($dom);
-
-        // Extract news items (adjust this query to be more inclusive)
-        $newsItems = $xpath->query("//article | //div[contains(@class, 'Promo')]");
-
-        if ($newsItems->length === 0) {
-            $this->info("No news items found.");
-            return;
-        }
-
-        $currentDate = date('Y-m-d'); // Format current date
-
-        foreach ($newsItems as $newsItem) {
-            // Extract the headline
-            $headlineNode = $xpath->query(".//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6", $newsItem);
-            $headline = $headlineNode->length ? $headlineNode->item(0)->textContent : '';
-
-            // Extract the link to the article
-            $linkNode = $xpath->query(".//a", $newsItem);
-            $link = $linkNode->length ? $linkNode->item(0)->getAttribute('href') : '';
-
-            if (!filter_var($link, FILTER_VALIDATE_URL)) {
-                $link = 'https://www.bbc.com' . $link;
+            try {
+                $response = $client->request('GET', $url, ['verify' => false]);
+                $html = $response->getBody()->getContents();
+            } catch (\Exception $e) {
+                $this->error("Failed to fetch data from $url: " . $e->getMessage());
+                continue;
             }
 
-            // Extract the description/summary
-            $descriptionNode = $xpath->query(".//p", $newsItem);
-            $description = $descriptionNode->length ? $descriptionNode->item(0)->textContent : '';
+            $dom = new DOMDocument();
+            @$dom->loadHTML($html);
+            $xpath = new DOMXPath($dom);
+            $newsItems = $xpath->query("//article | //div[contains(@class, 'Promo')]");
 
-            // Extract the publication date
-            $dateNode = $xpath->query(".//time", $newsItem);
-            $publicationDate = $dateNode->length ? $dateNode->item(0)->getAttribute('datetime') : '';
-
-            // Convert to Y-m-d format for comparison
-            if ($publicationDate) {
-                $publicationDate = date('Y-m-d', strtotime($publicationDate));
+            if ($newsItems->length === 0) {
+                $this->info("No news items found on $url.");
+                continue;
             }
 
-            // Extract image URL
-            $imageNode = $xpath->query(".//img", $newsItem);
-            $imageUrl = $imageNode->length ? $imageNode->item(0)->getAttribute('src') : '';
+            $currentDate = date('Y-m-d');
 
-            // Filter by keywords and date
-            $keywords = ['Somalia', 'Lebanon', 'violence', 'security', 'risk', 'danger', 'attack', 'climate', 'bomb', 'injured', 'fire', 'killed', 'troops', 'russia', 'Kamala', 'Israel'];
+            foreach ($newsItems as $newsItem) {
+                // Extract the headline
+                $headlineNode = $xpath->query(".//h1 | .//h2 | .//h3 | .//h4 | .//h5 | .//h6", $newsItem);
+                $headline = $headlineNode->length ? $headlineNode->item(0)->textContent : '';
 
-            if (
-                $this->containsKeywords($headline, $description, $keywords)
-                //  && $publicationDate === $currentDate
-            ) {
-                // Save the image
-                $imagePath = null;
-                if ($imageUrl) {
-                    // Get the image content
-                    $imageContent = file_get_contents($imageUrl);
-                    // Store the image
-                    $imagePath = '/storage/news_image/' . uniqid() . '.jpg'; // Generate a unique filename
-                    Storage::disk('public')->put($imagePath, $imageContent);
+                // Extract the link to the article
+                $linkNode = $xpath->query(".//a", $newsItem);
+                $link = $linkNode->length ? $linkNode->item(0)->getAttribute('href') : '';
+                if (!filter_var($link, FILTER_VALIDATE_URL)) {
+                    $link = rtrim($url, '/') . '/' . ltrim($link, '/');
                 }
 
-                // Save to database
-                News::create([
-                    'title' => $headline,
-                    'image' => $imagePath,
-                    'content' => $description,
-                    'link' => $link,
-                ]);
+                // Extract the description/summary
+                $descriptionNode = $xpath->query(".//p", $newsItem);
+                $description = $descriptionNode->length ? $descriptionNode->item(0)->textContent : '';
 
-                $this->info('News articles have been scraped and stored.');
-            } else {
-                $this->info("Not saved: either keywords not matched or date does not match.");
+                // Extract the publication date
+                $dateNode = $xpath->query(".//time", $newsItem);
+                $publicationDate = $dateNode->length ? $dateNode->item(0)->getAttribute('datetime') : '';
+                if ($publicationDate) {
+                    $publicationDate = date('Y-m-d', strtotime($publicationDate));
+                }
+
+                // Extract the image URL
+                $imageNode = $xpath->query(".//img", $newsItem);
+                $imageUrl = $imageNode->length ? $imageNode->item(0)->getAttribute('src') : '';
+
+                // Validate image URL
+                if ($imageUrl && !filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                    $imageUrl = rtrim($url, '/') . '/' . ltrim($imageUrl, '/');
+                }
+
+                // Define keywords for filtering
+                $keywords = ['Somalia', 'violence', 'security', 'risk', 'danger', 'attack', 'climate', 'bomb', 'injured', 'killed', 'killing', 'kill', 'fire', 'Lebanon'];
+
+                // Save to database if conditions are met
+                if (
+                    $this->containsKeywords($headline, $description, $keywords)
+                    // && $publicationDate === $currentDate
+                ) {
+                    $news = News::create([
+                        'title' => $headline,
+                        'content' => $description,
+                        'link' => $link,
+                    ]);
+
+                    // Save image if available
+                    if ($imageUrl) {
+                        $imageDir = 'news_image';
+                        Storage::disk('public')->makeDirectory($imageDir);
+                        $imagePath = $imageDir . '/' . basename($imageUrl);
+
+                        // Check if the image URL is valid
+                        $imageHeaders = @get_headers($imageUrl, 1);
+                        if ($imageHeaders && strpos($imageHeaders[0], '200') !== false) {
+                            try {
+                                $imageContents = file_get_contents($imageUrl);
+                                Storage::disk('public')->put($imagePath, $imageContents);
+                                $news->image_path = $imagePath; // Save the image path to the database
+                                $news->save();
+                            } catch (\Exception $e) {
+                                $this->error("Failed to save image from $imageUrl: " . $e->getMessage());
+                            }
+                        } else {
+                            $this->info("Image not found at $imageUrl, skipping.");
+                        }
+                    }
+                } else {
+                    $this->info("Not saved: either keywords not matched or date does not match.");
+                }
             }
         }
+
+        $this->info('News articles have been scraped and stored.');
     }
 
     private function containsKeywords($headline, $description, $keywords)
