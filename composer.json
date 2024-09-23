@@ -12,7 +12,7 @@
         "barryvdh/laravel-snappy": "^1.0",
         "google/cloud-firestore": "^1.43",
         "grpc/grpc": "^1.38",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^7.9",
         "kreait/laravel-firebase": "^5.8",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
