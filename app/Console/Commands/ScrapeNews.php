@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\News;
+use App\Models\ScrapeTarget;
 use DOMDocument;
 use DOMXPath;
 use GuzzleHttp\Client;
@@ -22,30 +23,34 @@ class ScrapeNews extends Command
     public function handle()
     {
         $client = new Client();
-        $urls = explode(',', env('NEWS_SITE_URL', 'https://www.bbc.com,https://edition.cnn.com/'));
+        $scrapeTargets = ScrapeTarget::where('status', 1)->get(); // Get all active targets
 
-        foreach ($urls as $url) {
-            $url = trim($url);
+        if ($scrapeTargets->isEmpty()) {
+            $this->error('No scrape targets found in the database.');
+            return;
+        }
+        $currentDate = date('Y-m-d');
 
-            try {
-                $response = $client->request('GET', $url, ['verify' => false]);
-                $html = $response->getBody()->getContents();
-            } catch (\Exception $e) {
-                $this->error("Failed to fetch data from $url: " . $e->getMessage());
-                continue;
-            }
+        foreach ($scrapeTargets as $scrapeTarget) {
+            // Get the URL, keywords, and area name
+            $url = $scrapeTarget->url;
+            $keywords = json_decode($scrapeTarget->keywords, true);
+            $areaName = $scrapeTarget->area_name; // Assume area_name column exists
+            $area_id = $scrapeTarget->area_id;
 
+            // Send GET request to fetch the page content
+            $response = $client->request('GET', $url, ['verify' => false]);
+            $html = $response->getBody()->getContents();
+
+            // Load HTML into DOMDocument
             $dom = new DOMDocument();
-            @$dom->loadHTML($html);
+            @$dom->loadHTML($html); // Suppress warnings from malformed HTML
+
+            // Create a new DOMXPath object
             $xpath = new DOMXPath($dom);
-            $newsItems = $xpath->query("//article | //div[contains(@class, 'Promo')]");
 
-            if ($newsItems->length === 0) {
-                $this->info("No news items found on $url.");
-                continue;
-            }
-
-            $currentDate = date('Y-m-d');
+            // Extract news items (you might need to adjust the XPath based on the site's structure)
+            $newsItems = $xpath->query("//div[contains(@class, 'css-1aofmbn-Promo')]");
 
             foreach ($newsItems as $newsItem) {
                 // Extract the headline
@@ -55,9 +60,6 @@ class ScrapeNews extends Command
                 // Extract the link to the article
                 $linkNode = $xpath->query(".//a", $newsItem);
                 $link = $linkNode->length ? $linkNode->item(0)->getAttribute('href') : '';
-                if (!filter_var($link, FILTER_VALIDATE_URL)) {
-                    $link = rtrim($url, '/') . '/' . ltrim($link, '/');
-                }
 
                 // Extract the description/summary
                 $descriptionNode = $xpath->query(".//p", $newsItem);
@@ -79,48 +81,54 @@ class ScrapeNews extends Command
                     $imageUrl = rtrim($url, '/') . '/' . ltrim($imageUrl, '/');
                 }
 
-                // Define keywords for filtering
-                $keywords = ['Somalia', 'violence', 'security', 'risk', 'danger', 'attack', 'climate', 'bomb', 'injured', 'killed', 'killing', 'kill', 'fire', 'Lebanon'];
+                // Add area name to the keywords and filter the news articles
+                $keywords[] = $areaName; // Include area name in the search criteria
 
-                // Save to database if conditions are met
                 if (
                     $this->containsKeywords($headline, $description, $keywords)
                     // && $publicationDate === $currentDate
                 ) {
-                    $news = News::create([
-                        'title' => $headline,
-                        'content' => $description,
-                        'link' => $link,
-                    ]);
+                    // Prevent duplicates by checking if a news article with the same title or link exists
+                    $existingNews = News::where('title', $headline)->orWhere('link', $link)->first();
+                    if (!$existingNews) {
+                        $news = News::create([
+                            'title' => $headline,
+                            'content' => $description,
+                            'link' => $link,
+                            'area_id' => $area_id,
+                        ]);
 
-                    // Save image if available
-                    if ($imageUrl) {
-                        $imageDir = 'news_image';
-                        Storage::disk('public')->makeDirectory($imageDir);
-                        $imagePath = $imageDir . '/' . basename($imageUrl);
+                        // Save image if available
+                        if ($imageUrl) {
+                            $imageDir = 'news_image';
+                            Storage::disk('public')->makeDirectory($imageDir);
+                            $imagePath = $imageDir . '/' . basename($imageUrl);
 
-                        // Check if the image URL is valid
-                        $imageHeaders = @get_headers($imageUrl, 1);
-                        if ($imageHeaders && strpos($imageHeaders[0], '200') !== false) {
-                            try {
-                                $imageContents = file_get_contents($imageUrl);
-                                Storage::disk('public')->put($imagePath, $imageContents);
-                                $news->image_path = $imagePath; // Save the image path to the database
-                                $news->save();
-                            } catch (\Exception $e) {
-                                $this->error("Failed to save image from $imageUrl: " . $e->getMessage());
+                            // Check if the image URL is valid
+                            $imageHeaders = @get_headers($imageUrl, 1);
+                            if ($imageHeaders && strpos($imageHeaders[0], '200') !== false) {
+                                try {
+                                    $imageContents = file_get_contents($imageUrl);
+                                    Storage::disk('public')->put($imagePath, $imageContents);
+                                    $news->image_path = $imagePath; // Save the image path to the database
+                                    $news->save();
+                                } catch (\Exception $e) {
+                                    $this->error("Failed to save image from $imageUrl: " . $e->getMessage());
+                                }
+                            } else {
+                                $this->info("Image not found at $imageUrl, skipping.");
                             }
-                        } else {
-                            $this->info("Image not found at $imageUrl, skipping.");
                         }
+                    } else {
+                        $this->info("Duplicate news article found: $headline, skipping.");
                     }
-                } else {
-                    $this->info("Not saved: either keywords not matched or date does not match.");
                 }
             }
+
+            $this->info("Finished scraping from $url for area: $areaName");
         }
 
-        $this->info('News articles have been scraped and stored.');
+        $this->info('All news articles have been scraped and stored.');
     }
 
     private function containsKeywords($headline, $description, $keywords)

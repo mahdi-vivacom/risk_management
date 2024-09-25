@@ -203,6 +203,9 @@ return [
     'inactive_status' => 'Status inactivated',
     'professional_skill' => 'Category of Professionals',
     'color' => 'Color',
+    'url' => 'Url',
+    'keyword' => 'Keyword',
+    'keywords' => 'Keywords',
 
 
 

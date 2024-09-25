@@ -4,19 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('news', function (Blueprint $table) {
+        Schema::create('scrape_targets', function (Blueprint $table) {
             $table->id();
-            $table->text('title')->nullable();
-            $table->text('image')->nullable();
-            $table->longText('content')->nullable();
-            $table->text('link')->nullable();
+            $table->text('url')->nullable();
+            $table->text('keywords')->nullable();
             $table->unsignedBigInteger('area_id')->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign(columns: 'area_id')->references('id')->on('country_areas')->onDelete('set null');
@@ -28,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('news');
+        Schema::dropIfExists('scrape_targets');
     }
 };
