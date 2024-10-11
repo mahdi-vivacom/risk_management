@@ -53,9 +53,9 @@
         <a href="{{ url('/') }}" class="logo d-flex align-items-center">
             {{-- <img style="height: 45px;" class="d-block d-lg-none" src="{{ asset('/backend') . '/assets/img/favicon.ico' }}"
                 alt="{{ config('app.name') }}"> --}}
-            {{-- <img class="d-none d-lg-block full-logo" src="{{ asset('/backend') . '/assets/img/xr_logo.png' }}"
-                alt="{{ config('app.name') }}"> --}}
-            <span class="d-none d-lg-block">{{ config('app.name') }}</span>
+            <img class="d-none d-lg-block full-logo" src="{{ asset('/backend') . '/assets/img/hrm_logo.png' }}"
+                alt="{{ config('app.name') }}">
+            {{-- <span class="d-none d-lg-block">{{ config('app.name') }}</span> --}}
         </a>
         <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->

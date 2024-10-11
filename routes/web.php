@@ -38,7 +38,7 @@ Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
     Artisan::call('route:clear');
     Artisan::call('view:clear');
-    return "Cache is cleared";
+    return redirect()->back()->with('success', "Cache is cleared");
 });
 
 Route::get('/', function () {
@@ -51,21 +51,11 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware(['auth', 'verified', 'ensure_password_reset']);
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-});
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware(['auth', 'can:profile.edit']);
+Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware(['auth', 'can:profile.update']);
 
 // .............. Multi Language Translation ...............
 Route::get('/changeLanguage', [LanguageController::class, 'changeLanguage'])->name('lang.change');
-
-//New Template Routes
-Route::get('/new-theme', function () {
-    return view('admin.user.index');
-});
-Route::get('/theme/create', function () {
-    return view('backend.theme.settings');
-});
 
 Route::get('/phone-validation', [HomeController::class, 'phone_validation'])->name('phone.validation');
 Route::get('/get-country-info/{id}', [CountryController::class, 'getCountryInfo'])->name('get.country.info');
@@ -73,19 +63,24 @@ Route::get('/get-country-area/{id}', [CountryAreaController::class, 'getCountryA
 
 Route::middleware(['auth', 'permission'])->group(function () {
 
+    // .............. User Access Control ...............
     Route::resource('users', UserController::class);
     Route::get('users-status', [UserController::class, 'status'])->name('users.status');
     Route::prefix('users/')->name('users.permission.')->group(function () {
         Route::get('permission/{id}', [UserController::class, 'edit_permission'])->name('edit');
         Route::post('permission/{id}', [UserController::class, 'update_permission'])->name('update');
     });
-
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
+
+    // .............. Menu ...............
+    Route::resource('menus', MenuController::class);
+    Route::get('menus-status', [MenuController::class, 'status'])->name('menus.status');
+
     Route::resource('countries', CountryController::class);
     Route::resource('country-areas', CountryAreaController::class);
     Route::resource('skills', SkillController::class);
-    Route::resource('menus', MenuController::class);
+
     Route::resource('documents', DocumentController::class);
     Route::resource('top-ups', TopUpController::class);
     Route::resource('commissions', CommissionController::class);

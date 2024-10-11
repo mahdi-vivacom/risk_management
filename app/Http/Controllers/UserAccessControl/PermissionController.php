@@ -17,11 +17,18 @@ class PermissionController extends Controller
     {
         $this->index      = 'Permission';
         $this->indexRoute = 'permissions';
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.index', ['only' => ['index']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.create', ['only' => ['create']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.store', ['only' => ['store']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.show', ['only' => ['show']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.edit', ['only' => ['edit']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.update', ['only' => ['update']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.destroy', ['only' => ['destroy']]);
     }
 
     public function index ( PermissionDataTable $dataTable )
     {
-        $data = [ 
+        $data = [
             'title' => $this->index . ' List',
         ];
         return $dataTable->render ( 'backend.common.index', $data );
@@ -29,7 +36,7 @@ class PermissionController extends Controller
 
     public function create ()
     {
-        $data = [ 
+        $data = [
             'title' => 'Create ' . $this->index,
             'route' => $this->indexRoute,
         ];
@@ -38,7 +45,7 @@ class PermissionController extends Controller
 
     public function store ( PermissionRequest $request )
     {
-        Permission::create ( [ 
+        Permission::create ( [
             'name'         => $request->input ( 'name' ),
             'guard_name'   => 'web',
             'display_name' => $request->input ( 'display_name' ),
@@ -54,7 +61,7 @@ class PermissionController extends Controller
 
     public function edit ( Permission $permission )
     {
-        $data = [ 
+        $data = [
             'title'      => 'Edit ' . $this->index,
             'permission' => $permission,
             'route'      => $this->indexRoute,
@@ -80,7 +87,7 @@ class PermissionController extends Controller
     {
         $permission->delete ();
         if ( request ()->ajax () ) {
-            return response ()->json ( [ 
+            return response ()->json ( [
                 'type'    => 'success',
                 'message' => $this->index . ' ' . trans ( 'admin_fields.data_delete_message' ),
             ] );

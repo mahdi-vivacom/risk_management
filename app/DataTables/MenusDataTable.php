@@ -28,13 +28,23 @@ class MenusDataTable extends DataTable
                 }
                 return $query->MainMenu->label;
             })
+            ->editColumn('label', function ($query) {
+                return !empty($query->label) ? $query->label : '---';
+            })
             ->editColumn('status', function ($query) {
                 return $query->status == 1 ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-warning">Inactive</span>';
             })
             ->addColumn('action', function ($query) {
                 $name = 'Menu';
-                if (auth()->user()->can('menus.destroy')) {
+                if (auth()->user()->can('menus.edit')) {
                     $a = '<a href="' . route('menus.edit', $query->id) . '" class="btn btn-outline-info btn-sm" title="Edit"><i class="ri-edit-box-line"></i></a>';
+                }
+                if (auth()->user()->can('menus.status')) {
+                    if ($query->status == 0) {
+                        $a .= '<button type="button" class="btn btn-sm btn-outline-success ms-1" onclick="confirmStatus(' . $query->id . ', \'' . $name . '\',1)" data-toggle="tooltip" data-placement="top" title="Activate this ' . $name . ' ??"><i class="ri-chat-check-fill"></i></button> ';
+                    } else {
+                        $a .= '<button type="button" class="btn btn-sm btn-outline-warning ms-1" onclick="confirmStatus(' . $query->id . ', \'' . $name . '\',0)" data-toggle="tooltip" data-placement="top" title="Deactivate this ' . $name . ' ??"><i class="ri-chat-delete-fill"></i></button> ';
+                    }
                 }
                 if (auth()->user()->can('menus.destroy')) {
                     $a .= '<button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete(' . $query->id . ', \'' . $name . '\')" data-toggle="tooltip" data-placement="top" title="Delete ' . $name . ' ??"><i class="ri-delete-bin-2-fill"></i></button> ';
@@ -90,11 +100,12 @@ class MenusDataTable extends DataTable
     {
         return [
             Column::make('serial')->title(trans('admin_fields.serial_number')),
-            Column::make('parent_menu')->title('Parent Menu'),
-            Column::make('label')->title('Menu Name'),
-            Column::make('route'),
+            Column::make('parent_menu')->title(trans('admin_fields.parent_menu')),
+            Column::make('label')->title(trans('admin_fields.menu_label')),
+            Column::make('route')->title(trans('admin_fields.route')),
             Column::computed('status')->title(trans('admin_fields.status')),
             Column::computed('action')
+                ->title(trans(key: 'admin_fields.action'))
                 ->exportable(false)
                 ->printable(false)
                 ->addClass('text-center'),

@@ -206,6 +206,7 @@ return [
     'url' => 'Url',
     'keyword' => 'Keyword',
     'keywords' => 'Keywords',
+    'keywords' => 'Keywords',
 
 
 

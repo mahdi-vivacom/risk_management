@@ -2,14 +2,19 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="ie=edge" http-equiv="x-ua-compatible">
-    <meta content="{{ csrf_token () }}" name="csrf-token">
-    <meta content="" name="description">
-    <meta content="" name="keywords">
-    <title>{{ config ( 'app.name' ) }} {{ !empty ( $title ) ? '| ' . $title : '' }}</title>
-
+    <meta content="{{ csrf_token() }}" name="csrf-token">
+    <meta content="{{ config('app.name') }}" name="description">
+    <meta content="{{ config('app.name') }}" name="keywords">
+    <meta content="{{ config('app.name') }}" name="apple-mobile-web-app-title" />
+    <title>{{ config('app.name') }} {{ !empty($title) ? '| ' . $title : '' }}</title>
     <!-- Favicons -->
-    <link href="{{ asset ( '/backend' ) . '/assets/img/favicon.ico' }}" rel="icon">
-    <link href="/backend/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="icon" type="image/png" href="{{ asset('/backend') . '/assets/img/favicon/favicon-48x48.png' }}"
+        sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('/backend') . '/assets/img/favicon/favicon.svg' }}" />
+    <link rel="shortcut icon" href="{{ asset('/backend') . '/assets/img/favicon/favicon.ico' }}" />
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="{{ asset('/backend') . '/assets/img/favicon/apple-touch-icon.png' }}" />
+    <link rel="manifest" href="{{ config('app.url') }}" />
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -26,13 +31,13 @@
     <!-- Template Main CSS File -->
     <link href="/backend/assets/css/style.css" rel="stylesheet">
 
-    {{-- font-awesome--}}
+    {{-- font-awesome --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-          integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
-          crossorigin="anonymous" referrerpolicy="no-referrer" />
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    {{-- vite--}}
-    @vite( [ 'resources/sass/app.scss', 'resources/js/app.js' ] )
+    {{-- vite --}}
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <!-- Custom CSS -->
     <style>
@@ -58,6 +63,6 @@
         }
     </style>
 
-    @yield( 'custom_css' )
+    @yield('custom_css')
 
 </head>

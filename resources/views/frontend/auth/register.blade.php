@@ -10,8 +10,8 @@
 
             <div class="d-flex justify-content-center py-4">
               <a href="{{ url('/') }}" class="logo d-flex align-items-center w-auto">
-                <img src="/backend/assets/img/logo.png" alt="">
-                <span class="d-none d-lg-block">{{ config('app.name') }}</span>
+                <img src="/backend/assets/img/hrm_logo.png" alt="{{ config('app.name') }}">
+                {{-- <span class="d-none d-lg-block">{{ config('app.name') }}</span> --}}
               </a>
             </div>
             <!-- End Logo -->
@@ -27,7 +27,7 @@
 
                 <form class="row g-3 needs-validation" novalidate method="POST" action="{{ route('register') }}">
                 @csrf
-                
+
                    <div class="col-12">
                     <label for="yourName" class="form-label @error('name') is-invalid @enderror">{{ __('Name') }}</label>
                     <input type="text" name="name" class="form-control" id="yourName" required value="{{ old('name') }}">
@@ -79,13 +79,13 @@
                   <div class="col-12">
                     <p class="small mb-0">Already have an account ? <a href="{{ route('login') }}">Log in</a></p>
                   </div>
-                  
+
                 </form>
 
               </div>
             </div>
 
-            <div class="copyright">Copyright &copy; 
+            <div class="copyright">Copyright &copy;
                 <strong><span><a href="{{ url('/') }}">{{ config('app.name', '') }}</a></span></strong>
                 <script>document.write(new Date().getFullYear());</script> - All Rights Reserved.
             </div>

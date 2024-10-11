@@ -34,11 +34,17 @@ class AppServiceProvider extends ServiceProvider
             view()->composer('*', function ($view) {
 
                 $userPermissions = Auth::check() ? (Auth::user()->hasRole('systemadmin') ? Permission::all()->pluck('id')->toArray() : Auth::user()->getAllPermissions()->pluck('id')->toArray()) : [];
-                $menuData = Menu::orderBy('serial', 'asc')
+                $menuData = Menu::with([
+                    'SubMenu' => function ($query) {
+                        $query->orderBy('serial', 'asc')
+                            ->where('status', 1);
+                    }
+                ])
+                    ->where('status', 1)
+                    ->orderBy('serial', 'asc')
                     ->where(function ($query) use ($userPermissions) {
                         $query->whereNull('parent_id')
                             ->whereIn('permission_id', $userPermissions)
-                            ->orderBy('serial', 'asc')
                             ->orWhereHas('SubMenu', function ($subQuery) use ($userPermissions) {
                                 $subQuery->whereIn('permission_id', $userPermissions);
                             });

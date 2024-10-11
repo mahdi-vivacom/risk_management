@@ -3,17 +3,25 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="ie=edge" http-equiv="x-ua-compatible">
     <meta content="{{ csrf_token() }}" name="csrf-token">
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+    <meta content="{{ config('app.name') }}" name="description">
+    <meta content="{{ config('app.name') }}" name="keywords">
+    <meta content="{{ config('app.name') }}" name="apple-mobile-web-app-title" />
     <title>{{ config('app.name') }} {{ !empty($title) ? '| ' . $title : '' }}</title>
 
     <!-- Favicons -->
-    <link href="{{ asset('/backend/assets/img/favicon.ico') }}" rel="icon">
-    <link href="/backend/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link rel="icon" type="image/png" href="{{ asset('/backend') . '/assets/img/favicon/favicon-48x48.png' }}"
+        sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('/backend') . '/assets/img/favicon/favicon.svg' }}" />
+    <link rel="shortcut icon" href="{{ asset('/backend') . '/assets/img/favicon/favicon.ico' }}" />
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="{{ asset('/backend') . '/assets/img/favicon/apple-touch-icon.png' }}" />
+    <link rel="manifest" href="{{ config('app.url') }}" />
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="/backend/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">

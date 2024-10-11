@@ -18,11 +18,18 @@ class RoleController extends Controller
     {
         $this->index      = 'Role';
         $this->indexRoute = 'roles';
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.index', ['only' => ['index']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.create', ['only' => ['create']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.store', ['only' => ['store']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.show', ['only' => ['show']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.edit', ['only' => ['edit']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.update', ['only' => ['update']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.destroy', ['only' => ['destroy']]);
     }
 
     public function index ( RoleDataTable $dataTable )
     {
-        $data = [ 
+        $data = [
             'title' => $this->index . ' List',
         ];
         return $dataTable->render ( 'backend.common.index', $data );
@@ -35,7 +42,7 @@ class RoleController extends Controller
         foreach ( $roleManagement as $key => $value ) {
             $permissions[ $value[ 'module_name' ] ][ $value[ 'id' ] ] = $value[ 'display_name' ];
         }
-        $data = [ 
+        $data = [
             'title'       => 'Create ' . $this->index,
             'permissions' => $permissions,
             'route'       => $this->indexRoute,
@@ -45,7 +52,7 @@ class RoleController extends Controller
 
     public function store ( RoleRequest $request )
     {
-        $role = Role::create ( [ 
+        $role = Role::create ( [
             'name'         => $request->input ( 'name' ),
             'display_name' => $request->input ( 'display_name' ),
         ] );
@@ -66,7 +73,7 @@ class RoleController extends Controller
         foreach ( $roleManagement as $key => $value ) {
             $permissions[ $value[ 'module_name' ] ][ $value[ 'id' ] ] = $value[ 'display_name' ];
         }
-        $data = [ 
+        $data = [
             'title'            => 'Edit ' . $this->index,
             'role'             => $role,
             'permissions'      => $permissions,
@@ -78,7 +85,7 @@ class RoleController extends Controller
 
     public function update ( Request $request, Role $role )
     {
-        $this->validate ( $request, [ 
+        $this->validate ( $request, [
             'display_name' => 'required',
         ] );
         $role->display_name = $request->input ( 'display_name' );
@@ -97,7 +104,7 @@ class RoleController extends Controller
     {
         $role->delete ();
         if ( request ()->ajax () ) {
-            return response ()->json ( [ 
+            return response ()->json ( [
                 'type'    => 'success',
                 'message' => $this->index . ' ' . trans ( 'admin_fields.data_delete_message' ),
             ] );
