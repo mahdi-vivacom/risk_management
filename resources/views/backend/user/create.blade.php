@@ -55,7 +55,7 @@
                             <select name="role" id="role" class="form-select select2 @error( 'role' ) is-invalid @enderror">
                                 <option value="">@lang ( 'admin_fields.select' )</option>
                                 @foreach ( $roles as $role )
-                                    <option value="{{ $role->id }}" {{ old ( 'role' ) == $role->id ? 'selected' : '' }}>
+                                    <option value="{{ $role->name }}" {{ old ( 'role' ) == $role->name ? 'selected' : '' }}>
                                         {{ $role->display_name }}</option>
                                 @endforeach
                             </select>

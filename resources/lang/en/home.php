@@ -1,5 +1,7 @@
 <?php
 return [
+    'copyright' => 'Copyright',
+    'right_reserved' => 'All Rights Reserved.',
     'hero_h1' => 'Send & Receive Money',
     'hero_h2' => 'Quickly, safely and easily with PayOnTime.',
     'sendingFrom' => 'I\'m sending from',

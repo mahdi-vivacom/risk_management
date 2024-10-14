@@ -3,9 +3,22 @@
 @endsection
 @section('content')
     <style>
+        .form-control {
+            border: 2px solid #191919;
+            background-color: #191919;
+        }
+
+        .form-control:focus {
+            border: 2px solid #191919;
+            background-color: #191919;
+        }
+
         .page-login::before {
-            /* background-image: url("{{ asset('backend/assets/img/login-bg.png') }}"); */
-            background-color: skyblue;
+            background-color: #000000;
+        }
+
+        .dark {
+            background-color: #000000;
         }
 
         .page-dark.layout-full::before {
@@ -25,8 +38,37 @@
             padding-top: 0 !important;
         }
 
-        .logo img {
-            max-height: 60px;
+        /* Hide the default checkbox */
+        .form-check-input {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #DCDCDC;
+            border: 2px solid #ccc;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* Style the checkbox when it's checked */
+        .form-check-input:checked {
+            background-color: #4f4f4f;
+            /* Change to green when checked */
+            border: 2px solid #4f4f4f;
+        }
+
+        /* Add a checkmark when it's checked */
+        .form-check-input:checked::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 2px;
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
         }
     </style>
     <section
@@ -34,24 +76,23 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
-                    <div class="card">
+                    <div class="card dark">
                         <div class="card-body">
                             <div class="d-flex justify-content-center pt-5">
-                                <a href="{{ url('/') }}" class="logo d-flex align-items-center w-auto">
-                                    <img src="{{ asset('/backend') }}/assets/img/hrm_logo.png" alt="{{ config('app.name') }}">
-                                    {{-- <span class="d-none d-lg-block">{{ config('app.name') }}</span> --}}
+                                <a href="{{ url('/') }}" class="d-flex align-items-center w-auto">
+                                    <img src="{{ asset('/backend') }}/assets/img/hrm-mini.png" alt="{{ config('app.name') }}"
+                                        height="96px;">
                                 </a>
                             </div>
 
-                            {{-- <h5 class="card-title text-center fs-4">Login to Your Account</h5> --}}
-
-                            <form class="row g-3 needs-validation" novalidate method="POST" action="{{ route('login') }}">
+                            <form class="row g-3 needs-validation py-5" novalidate method="POST"
+                                action="{{ route('login') }}">
                                 @csrf
 
                                 <div class="col-12">
                                     <label for="youremail" class="form-label">Email</label>
                                     <div class="input-group has-validation">
-                                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                                        {{-- <span class="input-group-text" id="inputGroupPrepend">@</span> --}}
                                         <input type="email" name="email"
                                             class="form-control @error('email') is-invalid @enderror" id="youremail"
                                             value="{{ old('email') }}" autocomplete="on" required autofocus>
@@ -75,16 +116,17 @@
                                     @enderror
                                 </div>
 
-                                <div class="col-12">
+                                <div class="col-6">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="remember" value="t rue"
+                                        <input class="form-check-input" type="checkbox" name="remember" value="true"
                                             id="rememberMe">
                                         <label class="form-check-label" for="rememberMe">{{ __('Remember me') }}</label>
                                     </div>
                                 </div>
 
-                                <div class="col-12">
-                                    <button class="btn btn-primary w-100" type="submit">Login</button>
+                                <div class="col-6">
+                                    <button class="btn btn-white float-end" type="submit"
+                                        style="background-color: #DCDCDC;">Log In</button>
                                 </div>
 
                                 <div class="col-12">
@@ -97,13 +139,15 @@
                                 </div> --}}
                             </form>
 
-                            <small class="copyright pt-3">&copy;
+                            <small class="d-flex justify-content-center"><a href="{{ url(env('POLICY_URL')) }}"><u>Privacy
+                                        Policy</u></a></small>
+                            {{-- <small class="copyright pt-3">&copy;
                                 <strong><a href="{{ url(env('COPYRIGHT_URL')) }}">{{ env('COPYRIGHT_TITLE') }}</a></strong>
                                 |
                                 <script>
                                     document.write(new Date().getFullYear());
                                 </script> - All Rights Reserved.
-                            </small>
+                            </small> --}}
                         </div>
                     </div>
                 </div>

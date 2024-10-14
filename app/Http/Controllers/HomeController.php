@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\Client;
 use App\Models\Configuration;
 use App\Models\Country;
 use App\Models\CountryArea;
-use App\Models\Professional;
-use App\Models\Skill;
 use App\Services\PhoneNumberValidationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
 
 class HomeController extends Controller
 {
@@ -25,12 +20,7 @@ class HomeController extends Controller
     public function index()
     {
         if (Auth::check()) {
-            $data = [
-                'title' => trans('admin_fields.dashboard'),
-                'config' => Configuration::first(),
-                'regions' => CountryArea::where('status', 1)->where('country_id', 1)->get(),
-            ];
-            return view('backend.index', $data);
+            return redirect('/dashboard');
         } else {
             return view('frontend.auth.login');
         }
@@ -49,15 +39,11 @@ class HomeController extends Controller
     {
         if (Auth::check()) {
             $data = [
-                'title' => trans('admin_fields.dashboard'),
-                'clients' => Client::where('status', 1)->count(),
-                'professionals' => Professional::where('status', 1)->count(),
-                'countries' => Country::where('status', 1)->count(),
+                // 'title' => trans('admin_fields.dashboard'),
                 'areas' => CountryArea::where('status', 1)->count(),
-                'skills' => Skill::where('status', 1)->count(),
-                'booking' => Booking::whereIn('status', [1, 2, 3, 4])->count(),
-                'cancelled' => Booking::whereIn('status', [6, 7, 8, 9])->count(),
-                'completed' => Booking::where('complete', 1)->count(),
+                'config' => Configuration::first(),
+                'regions' => CountryArea::where('status', 1)->where('country_id', 1)->get(),
+                'countries' => Country::where('status', 1)->count(),
             ];
             return view('backend.common.dashboard', $data);
         } else {

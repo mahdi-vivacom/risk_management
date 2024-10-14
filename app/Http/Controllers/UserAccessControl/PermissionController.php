@@ -40,7 +40,7 @@ class PermissionController extends Controller
             'title' => 'Create ' . $this->index,
             'route' => $this->indexRoute,
         ];
-        return view ( 'backend.' . $this->index . '.create', $data );
+        return view ( 'backend.permission.create', $data );
     }
 
     public function store ( PermissionRequest $request )
@@ -66,7 +66,7 @@ class PermissionController extends Controller
             'permission' => $permission,
             'route'      => $this->indexRoute,
         ];
-        return view ( 'backend.' . $this->index . '.edit', $data );
+        return view ( 'backend.permission.edit', $data );
     }
 
     public function update ( Request $request, Permission $permission )

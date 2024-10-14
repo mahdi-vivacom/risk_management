@@ -16,7 +16,7 @@ use App\Http\Controllers\MapController;
 use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\ProfessionalController;
 use App\Http\Controllers\RatingController;
-use App\Http\Controllers\RefundController;
+use App\Http\Controllers\RiskLevelController;
 use App\Http\Controllers\ScrapeTargetController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\SosController;
@@ -42,26 +42,24 @@ Route::get('/clear-cache', function () {
 });
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect('/dashboard');
-    } else {
-        return view('frontend.auth.login');
-    }
+    return Auth::check() ? redirect('/dashboard') : view('frontend.auth.login');
 });
 
-Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard')->middleware(['auth', 'verified', 'ensure_password_reset']);
+Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard')->middleware(['auth', 'ensure_password_reset', 'can:dashboard']);
 
+// .............. Profile ...............
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware(['auth', 'can:profile.edit']);
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware(['auth', 'can:profile.update']);
 
-// .............. Multi Language Translation ...............
-Route::get('/changeLanguage', [LanguageController::class, 'changeLanguage'])->name('lang.change');
-
+// .............. Phone Validation ...............
 Route::get('/phone-validation', [HomeController::class, 'phone_validation'])->name('phone.validation');
 Route::get('/get-country-info/{id}', [CountryController::class, 'getCountryInfo'])->name('get.country.info');
 Route::get('/get-country-area/{id}', [CountryAreaController::class, 'getCountryArea'])->name('get.country.area');
 
-Route::middleware(['auth', 'permission'])->group(function () {
+// .............. Multi Language Translation ...............
+Route::get('/changeLanguage', [LanguageController::class, 'changeLanguage'])->name('lang.change');
+
+Route::middleware(['auth', 'ensure_password_reset', 'permission'])->group(function () {
 
     // .............. User Access Control ...............
     Route::resource('users', UserController::class);
@@ -77,34 +75,35 @@ Route::middleware(['auth', 'permission'])->group(function () {
     Route::resource('menus', MenuController::class);
     Route::get('menus-status', [MenuController::class, 'status'])->name('menus.status');
 
+    // .............. Country ...............
     Route::resource('countries', CountryController::class);
+    // .............. Country Area ...............
     Route::resource('country-areas', CountryAreaController::class);
-    Route::resource('skills', SkillController::class);
 
-    Route::resource('documents', DocumentController::class);
-    Route::resource('top-ups', TopUpController::class);
-    Route::resource('commissions', CommissionController::class);
-    Route::resource('subscriptions', SubscriptionController::class);
-    Route::get('subscriptions-history', [SubscriptionController::class, 'history'])->name('subscriptions.history');
-    Route::resource('refunds', RefundController::class);
-    Route::get('refunds-status', [RefundController::class, 'status'])->name('refunds.status');
-    Route::resource('transactions', TransactionController::class);
-    Route::resource('ratings', RatingController::class);
-    Route::resource('bookings', BookingController::class);
-    Route::resource('clients', ClientController::class);
-    Route::get('clients-status', [ClientController::class, 'status'])->name('clients.status');
-    Route::resource('professionals', ProfessionalController::class);
-    Route::get('professionals-wallet-recharge', [ProfessionalController::class, 'wallet_recharge'])->name('professionals.wallet.recharge');
-    Route::get('professionals-status', [ProfessionalController::class, 'status'])->name('professionals.status');
-    Route::resource('navigations', NavigationController::class);
-    Route::resource('cancel-reasons', CancelReasonController::class);
-    Route::resource('customer-supports', CustomerSupportController::class);
+    // Route::resource('skills', SkillController::class);
+    // Route::resource('documents', DocumentController::class);
+    // Route::resource('top-ups', TopUpController::class);
+    // Route::resource('commissions', CommissionController::class);
+    // Route::resource('subscriptions', SubscriptionController::class);
+    // Route::get('subscriptions-history', [SubscriptionController::class, 'history'])->name('subscriptions.history');
+    // Route::resource('transactions', TransactionController::class);
+    // Route::resource('ratings', RatingController::class);
+    // Route::resource('bookings', BookingController::class);
+    // Route::resource('clients', ClientController::class);
+    // Route::get('clients-status', [ClientController::class, 'status'])->name('clients.status');
+    // Route::resource('professionals', ProfessionalController::class);
+    // Route::get('professionals-wallet-recharge', [ProfessionalController::class, 'wallet_recharge'])->name('professionals.wallet.recharge');
+    // Route::get('professionals-status', [ProfessionalController::class, 'status'])->name('professionals.status');
+    // Route::resource('navigations', NavigationController::class);
+    // Route::resource('cancel-reasons', CancelReasonController::class);
+    // Route::resource('customer-supports', CustomerSupportController::class);
     Route::get('professional-map', [MapController::class, 'map'])->name('map');
     Route::get('heat-map', [MapController::class, 'heat_map'])->name('heat.map');
-    Route::resource('cms-pages', CmsPageController::class);
-    Route::resource('sos-numbers', SosController::class);
-    Route::resource('sos-requests', SosRequestController::class);
+    // Route::resource('cms-pages', CmsPageController::class);
+    // Route::resource('sos-numbers', SosController::class);
+    // Route::resource('sos-requests', SosRequestController::class);
     Route::resource('scrape-targets', ScrapeTargetController::class);
+    Route::resource('risk-levels', RiskLevelController::class);
 
 
 });

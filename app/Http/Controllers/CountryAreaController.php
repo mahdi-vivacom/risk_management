@@ -17,7 +17,15 @@ class CountryAreaController extends Controller
     public function __construct()
     {
         $this->index = 'Country Area';
-        $this->indexRoute = 'country-areas.index';
+        $this->indexRoute = 'country-areas';
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.index', ['only' => ['index']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.create', ['only' => ['create']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.store', ['only' => ['store']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.show', ['only' => ['show']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.edit', ['only' => ['edit']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.update', ['only' => ['update']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.destroy', ['only' => ['destroy']]);
+        $this->middleware('role_or_permission:systemadmin|' . $this->indexRoute . '.status', ['only' => ['status']]);
     }
     /**
      * Display a listing of the resource.
@@ -72,7 +80,7 @@ class CountryAreaController extends Controller
             $model->insertSkillAreas($request->skill);
         }
 
-        return redirect()->route($this->indexRoute)->with('success', $this->index . ' ' . trans('admin_fields.data_store_message'));
+        return redirect()->route($this->indexRoute . '.index')->with('success', $this->index . ' ' . trans('admin_fields.data_store_message'));
     }
 
     /**
@@ -129,7 +137,7 @@ class CountryAreaController extends Controller
         if (!empty($request->skill)) {
             $countryArea->insertSkillAreas($request->skill);
         }
-        return redirect()->route($this->indexRoute)->with('success', $this->index . ' ' . trans('admin_fields.data_update_message'));
+        return redirect()->route($this->indexRoute . '.index')->with('success', $this->index . ' ' . trans('admin_fields.data_update_message'));
     }
 
     /**
@@ -144,7 +152,7 @@ class CountryAreaController extends Controller
                 'message' => $this->index . ' ' . trans('admin_fields.data_delete_message'),
             ]);
         }
-        return redirect()->route($this->indexRoute)->with('success', $this->index . ' ' . trans('admin_fields.data_delete_message'));
+        return redirect()->route($this->indexRoute . '.index')->with('success', $this->index . ' ' . trans('admin_fields.data_delete_message'));
     }
 
     public function getCountryArea($id)

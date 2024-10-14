@@ -36,20 +36,21 @@ class MenusDataTable extends DataTable
             })
             ->addColumn('action', function ($query) {
                 $name = 'Menu';
+                $a = '';
                 if (auth()->user()->can('menus.edit')) {
-                    $a = '<a href="' . route('menus.edit', $query->id) . '" class="btn btn-outline-info btn-sm" title="Edit"><i class="ri-edit-box-line"></i></a>';
+                    $a = '<a href="' . route('menus.edit', $query->id) . '" class="btn btn-outline-info btn-sm" title="Edit"><i class="ri-edit-box-line"></i></a> ';
                 }
                 if (auth()->user()->can('menus.status')) {
                     if ($query->status == 0) {
-                        $a .= '<button type="button" class="btn btn-sm btn-outline-success ms-1" onclick="confirmStatus(' . $query->id . ', \'' . $name . '\',1)" data-toggle="tooltip" data-placement="top" title="Activate this ' . $name . ' ??"><i class="ri-chat-check-fill"></i></button> ';
+                        $a .= '<button type="button" class="btn btn-sm btn-outline-success" onclick="confirmStatus(' . $query->id . ', \'' . $name . '\',1)" data-toggle="tooltip" data-placement="top" title="Activate this ' . $name . ' ??"><i class="ri-chat-check-fill"></i></button> ';
                     } else {
-                        $a .= '<button type="button" class="btn btn-sm btn-outline-warning ms-1" onclick="confirmStatus(' . $query->id . ', \'' . $name . '\',0)" data-toggle="tooltip" data-placement="top" title="Deactivate this ' . $name . ' ??"><i class="ri-chat-delete-fill"></i></button> ';
+                        $a .= '<button type="button" class="btn btn-sm btn-outline-warning" onclick="confirmStatus(' . $query->id . ', \'' . $name . '\',0)" data-toggle="tooltip" data-placement="top" title="Deactivate this ' . $name . ' ??"><i class="ri-chat-delete-fill"></i></button> ';
                     }
                 }
                 if (auth()->user()->can('menus.destroy')) {
                     $a .= '<button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete(' . $query->id . ', \'' . $name . '\')" data-toggle="tooltip" data-placement="top" title="Delete ' . $name . ' ??"><i class="ri-delete-bin-2-fill"></i></button> ';
-                    return $a;
                 }
+                return $a;
             })
             ->rawColumns(['status', 'action'])
             ->setRowId('id')

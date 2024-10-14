@@ -9,12 +9,10 @@
     <title>{{ config('app.name') }} {{ !empty($title) ? '| ' . $title : '' }}</title>
 
     <!-- Favicons -->
-    <link rel="icon" type="image/png" href="{{ asset('/backend') . '/assets/img/favicon/favicon-48x48.png' }}"
-        sizes="48x48" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('/backend') . '/assets/img/favicon/favicon.svg' }}" />
-    <link rel="shortcut icon" href="{{ asset('/backend') . '/assets/img/favicon/favicon.ico' }}" />
-    <link rel="apple-touch-icon" sizes="180x180"
-        href="{{ asset('/backend') . '/assets/img/favicon/apple-touch-icon.png' }}" />
+    <link rel="icon" type="image/png" href="{{ asset('/backend') . '/assets/img/hrm-favicon.png' }}" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('/backend') . '/assets/img/hrm-favicon.png' }}" />
+    <link rel="shortcut icon" href="{{ asset('/backend') . '/assets/img/hrm-favicon.png' }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('/backend') . '/assets/img/hrm-favicon.png' }}" />
     <link rel="manifest" href="{{ config('app.url') }}" />
 
     <!-- Google Fonts -->
@@ -37,16 +35,5 @@
 
     <!-- Template Main CSS File -->
     <link href="/backend/assets/css/style.css" rel="stylesheet">
-
-    <style>
-        #login_banner {
-            background-image: url({{ '/backend/assets/img/banner.jpg' }});
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100vh;
-            opacity: 0.7;
-        }
-    </style>
 
 </head>

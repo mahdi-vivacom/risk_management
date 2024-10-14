@@ -35,13 +35,14 @@ class PermissionDataTable extends DataTable
             })
             ->addColumn('action', function ($query) {
                 $name = 'Permission';
+                $a = '';
                 if (auth()->user()->can('permissions.edit')) {
-                    $a = '<a href="' . route('permissions.edit', $query->id) . '" class="btn btn-outline-info btn-sm" title="Edit"><i class="ri-edit-box-line"></i></a>';
+                    $a = '<a href="' . route('permissions.edit', $query->id) . '" class="btn btn-outline-info btn-sm" title="Edit"><i class="ri-edit-box-line"></i></a> ';
                 }
                 if (auth()->user()->can('permissions.destroy')) {
                     $a .= '<button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete(' . $query->id . ', \'' . $name . '\')" data-toggle="tooltip" data-placement="top" title="Delete ' . $name . ' ??"><i class="ri-delete-bin-2-fill"></i></button> ';
-                    return $a;
                 }
+                return $a;
             })
             ->rawColumns(['status', 'action'])
             ->setRowId('id');

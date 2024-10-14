@@ -63,6 +63,7 @@
         var NewJson;
         var polygonArray = [];
         let data = {!! $countryArea->coordinates !!};
+        let color = @json($countryArea->color); // Convert PHP array to JavaScript array
         let triangleCoords = [];
         var bounds = new google.maps.LatLngBounds();
         var drawingManager;
@@ -72,7 +73,7 @@
             map = new google.maps.Map(
                 document.getElementById("polygons"), {
                     center: new google.maps.LatLng(data[0].latitude, data[0].longitude),
-                    zoom: 8,
+                    zoom: 6,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 });
 
@@ -109,12 +110,12 @@
             map.setCenter(latlng)
             polygon = new google.maps.Polygon({
                 paths: triangleCoords,
-                strokeColor: '#FF0000',
+                strokeColor: color || '#FF0000',
                 draggable: true,
                 editable: true,
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
-                fillColor: '#FF0000',
+                fillColor: color || '#FF0000',
                 fillOpacity: 0.35
             });
             polygon.setMap(map);
@@ -172,7 +173,8 @@
                                     item["longitude"] = data[i][0].toString();
                                     AreaLatlong.push(item);
                                     triangleCoords.push(new google.maps.LatLng(data[i][1], data[i][
-                                        0]));
+                                        0
+                                    ]));
                                 }
                                 for (i = 0; i < triangleCoords.length; i++) {
                                     bounds.extend(triangleCoords[i]);

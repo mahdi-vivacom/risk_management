@@ -81,8 +81,8 @@
         function initMap() {
             map = new google.maps.Map(
                 document.getElementById("polygons"), {
-                    center: new google.maps.LatLng(37.4419, -122.1419),
-                    zoom: 10,
+                    center: new google.maps.LatLng(5.1521, 46.1996),
+                    zoom: 6,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 });
 

@@ -104,45 +104,6 @@
         });
     }
 
-    function confirmRefund(id, status) {
-        Swal.fire({
-            title: status == 1 ? 'Confirm refund ?' : 'Cancel refund ?',
-            text: `You want to ${status == 1 ? 'confirm' : 'cancel'} this refund request ??`,
-            icon: status == 1 ? 'success' : 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            // cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes',
-            cancelButtonText: 'No',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "{{ route('refunds.status') }}",
-                    type: 'GET',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: id,
-                        status: status,
-                    },
-                    success: function(response) {
-                        $(function() {
-                            Toast.fire({
-                                icon: response.type,
-                                title: response.message
-                            })
-                        });
-                        $("#refunds-table").DataTable().ajax.reload();
-                    },
-                    error: function(response) {
-                        Toast.fire({
-                            icon: response.type,
-                            title: response.message
-                        })
-                    }
-                });
-            }
-        })
-    }
 </script>
 
 @if (\Session::has('success'))

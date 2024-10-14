@@ -8,12 +8,12 @@
     <meta content="{{ config('app.name') }}" name="apple-mobile-web-app-title" />
     <title>{{ config('app.name') }} {{ !empty($title) ? '| ' . $title : '' }}</title>
     <!-- Favicons -->
-    <link rel="icon" type="image/png" href="{{ asset('/backend') . '/assets/img/favicon/favicon-48x48.png' }}"
+    <link rel="icon" type="image/png" href="{{ asset('/backend') . '/assets/img/hrm-favicon.png' }}"
         sizes="48x48" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('/backend') . '/assets/img/favicon/favicon.svg' }}" />
-    <link rel="shortcut icon" href="{{ asset('/backend') . '/assets/img/favicon/favicon.ico' }}" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('/backend') . '/assets/img/hrm-favicon.png' }}" />
+    <link rel="shortcut icon" href="{{ asset('/backend') . '/assets/img/favicon/hrm-favicon.png' }}" />
     <link rel="apple-touch-icon" sizes="180x180"
-        href="{{ asset('/backend') . '/assets/img/favicon/apple-touch-icon.png' }}" />
+        href="{{ asset('/backend') . '/assets/img/favicon/hrm-favicon.png' }}" />
     <link rel="manifest" href="{{ config('app.url') }}" />
 
     <!-- Google Fonts -->
@@ -39,30 +39,10 @@
     {{-- vite --}}
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
+    <!-- Common CSS -->
+    @include('backend.layout.includes.common_css')
+
     <!-- Custom CSS -->
-    <style>
-        .select2-selection__rendered {
-            line-height: 2.3em !important;
-        }
-
-        .select2-container .select2-selection--single {
-            height: 2.3em !important;
-        }
-
-        .select2-selection__arrow {
-            height: 2.5em !important;
-        }
-
-        .select2-container--default .select2-selection--single {
-            border: 1px solid #ced4da !important;
-            border-radius: 0.25rem;
-        }
-
-        .select2-container {
-            width: 100% !important;
-        }
-    </style>
-
     @yield('custom_css')
 
 </head>

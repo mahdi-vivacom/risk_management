@@ -206,7 +206,12 @@ return [
     'url' => 'Url',
     'keyword' => 'Keyword',
     'keywords' => 'Keywords',
-    'keywords' => 'Keywords',
+    'level' => 'Level',
+    'risk_level' => 'Risk Level',
+    'score_min' => 'Minimum Score',
+    'score_max' => 'Maximun Score',
+    'action_required' => 'Action Required',
+    'risk_score' => 'Risk&nbsp;Score',
 
 
 

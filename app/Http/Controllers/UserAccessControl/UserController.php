@@ -68,6 +68,7 @@ class UserController extends Controller
             $request->profile_image = $this->userService->profile_image_upload($request->hasFile('profile_image'));
         }
         $this->userService->storeUser($request);
+
         return redirect()->route($this->indexRoute . '.index')->with('success', $this->title . ' ' . trans('admin_fields.data_store_message'));
     }
 
@@ -142,7 +143,9 @@ class UserController extends Controller
     public function update_permission(Request $request)
     {
         $user = User::find($request->id);
-        $user->syncPermissions($request->input('permission'));
+        $permissionIds = $request->input('permission', []);
+        $permissions = Permission::whereIn('id', $permissionIds)->get();
+        $user->syncPermissions($permissions);
         return redirect()->route($this->indexRoute . '.index')->with('success', $this->title . ' ' . trans('admin_fields.permission_update_message'));
     }
 
