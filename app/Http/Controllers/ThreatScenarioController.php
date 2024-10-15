@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTables\RiskLevelsDataTable;
-use App\Models\RiskLevel;
+use App\DataTables\ThreatScenariosDataTable;
+use App\Models\ThreatScenario;
 use Illuminate\Http\Request;
 
-class RiskLevelController extends Controller
+class ThreatScenarioController extends Controller
 {
     protected $title;
     protected $index;
@@ -14,14 +14,14 @@ class RiskLevelController extends Controller
 
     public function __construct()
     {
-        $this->title = 'Risk Level';
-        $this->index = 'riskLevel';
-        $this->indexRoute = 'risk-levels';
+        $this->title = 'Threat Scenario';
+        $this->index = 'threatScenario';
+        $this->indexRoute = 'threat-scenarios';
     }
     /**
      * Display a listing of the resource.
      */
-    public function index(RiskLevelsDataTable $dataTable)
+    public function index(ThreatScenariosDataTable $dataTable)
     {
         $data = [
             'title' => $this->title . ' List',
@@ -47,17 +47,14 @@ class RiskLevelController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'level' => 'required',
-            'score_min' => 'required|integer',
-            'score_max' => 'required|integer',
-            'color' => 'required',
-            'action' => 'required',
+            'type' => 'required|in:Threat to movement,Threat to work site,Threat to local population',
+            'name' => 'required|string|max:255',
+            'definition' => 'required|string',
         ], [
-            'score_min.required' => 'The minimum score field is required.',
-            'score_max.required' => 'The maximum score field is required.',
+            'name.required' => 'Threat type is required.',
         ]);
 
-        $model = new RiskLevel();
+        $model = new ThreatScenario();
         $model->fill($validatedData);
         $model->save();
 
@@ -67,19 +64,19 @@ class RiskLevelController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RiskLevel $riskLevel)
+    public function show(ThreatScenario $threatScenario)
     {
-        return $riskLevel;
+        return $threatScenario;
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(RiskLevel $riskLevel)
+    public function edit(ThreatScenario $threatScenario)
     {
         $data = [
             'title' => 'Edit ' . $this->title,
-            'riskLevel' => $riskLevel,
+            'threatScenario' => $threatScenario,
             'route' => $this->indexRoute,
         ];
         return view('backend.' . $this->index . '.edit', $data);
@@ -88,20 +85,17 @@ class RiskLevelController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, RiskLevel $riskLevel)
+    public function update(Request $request, ThreatScenario $threatScenario)
     {
         $validatedData = $request->validate([
-            'level' => 'required',
-            'score_min' => 'required|integer',
-            'score_max' => 'required|integer',
-            'color' => 'required',
-            'action' => 'required',
+            'type' => 'required|in:Threat to movement,Threat to work site,Threat to local population',
+            'name' => 'required|string|max:255',
+            'definition' => 'required|string',
         ], [
-            'score_min.required' => 'The minimum score field is required.',
-            'score_max.required' => 'The maximum score field is required.',
+            'name.required' => 'Threat type is required.',
         ]);
 
-        $riskLevel->update($validatedData);
+        $threatScenario->update($validatedData);
 
         return redirect()->route($this->indexRoute . '.index')->with('success', $this->title . ' ' . trans('admin_fields.data_update_message'));
     }
@@ -109,9 +103,9 @@ class RiskLevelController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RiskLevel $riskLevel)
+    public function destroy(ThreatScenario $threatScenario)
     {
-        $riskLevel->delete();
+        $threatScenario->delete();
         if (request()->ajax()) {
             return response()->json([
                 'type' => 'success',

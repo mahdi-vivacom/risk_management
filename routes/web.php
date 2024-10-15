@@ -11,6 +11,7 @@ use App\Http\Controllers\CustomerSupportController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\LikelihoodImpactVulnerabilityController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\NavigationController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\SosController;
 use App\Http\Controllers\SosRequestController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ThreatScenarioController;
 use App\Http\Controllers\TopUpController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserAccessControl\PermissionController;
@@ -104,6 +106,10 @@ Route::middleware(['auth', 'ensure_password_reset', 'permission'])->group(functi
     // Route::resource('sos-requests', SosRequestController::class);
     Route::resource('scrape-targets', ScrapeTargetController::class);
     Route::resource('risk-levels', RiskLevelController::class);
+    Route::resource('threat-scenarios', ThreatScenarioController::class);
+    Route::resource('likelihoods', LikelihoodImpactVulnerabilityController::class);
+    Route::resource('impacts', LikelihoodImpactVulnerabilityController::class);
+    Route::resource('vulnerabilities', LikelihoodImpactVulnerabilityController::class);
 
 
 });

@@ -212,6 +212,10 @@ return [
     'score_max' => 'Maximun Score',
     'action_required' => 'Action Required',
     'risk_score' => 'Risk&nbsp;Score',
+    'score' => 'Score',
+    'definition' => 'Definition',
+    'threat_to' => 'Threat&nbsp;To',
+    'threat_type' => 'Threat&nbsp;Type',
 
 
 

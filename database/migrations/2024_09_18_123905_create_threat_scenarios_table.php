@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('threat_scenarios', function (Blueprint $table) {
             $table->id();
-            $table->string(column: 'type')->nullable();
-            $table->string(column: 'name')->nullable();
+            $table->string('type')->nullable();
+            $table->string('name')->nullable();
             $table->text('definition')->nullable();
             $table->timestamps();
             $table->softDeletes();

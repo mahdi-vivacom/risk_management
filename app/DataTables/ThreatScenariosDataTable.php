@@ -2,15 +2,16 @@
 
 namespace App\DataTables;
 
-use App\Models\RiskLevel;
+use App\Models\ThreatScenario;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Str;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class RiskLevelsDataTable extends DataTable
+class ThreatScenariosDataTable extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -24,31 +25,28 @@ class RiskLevelsDataTable extends DataTable
                 static $count = 0;
                 return ++$count;
             })
-            ->addColumn('risk_score', function ($query) {
-                return '<div style="background-color:' . $query->color . '; padding:10px; width:100%;">' . $query->score_min . ' - ' . $query->score_max . '</div>';
+            ->editColumn('definition', function ($query) {
+                return Str::limit($query->definition, 100);
             })
-            ->editColumn('color', function ($query) {
-                return !empty($query->color) ? '<span style="display:inline-block; width:20px; height:20px; background-color:' . $query->color . '; border: 1px solid #000;"></span>' : '';
-            })
-            ->addColumn('actions', function ($query) {
-                $name = 'RiskLevel';
+            ->addColumn('action', function ($query) {
+                $name = 'ThreatScenario';
                 $a = '';
-                if (auth()->user()->can('risk-levels.edit')) {
-                    $a = '<a href="' . route('risk-levels.edit', $query->id) . '" class="btn btn-outline-info btn-sm" title="Edit"><i class="ri-edit-box-line"></i></a> ';
+                if (auth()->user()->can('threat-scenarios.edit')) {
+                    $a = '<a href="' . route('threat-scenarios.edit', $query->id) . '" class="btn btn-outline-info btn-sm" title="Edit"><i class="ri-edit-box-line"></i></a> ';
                 }
-                if (auth()->user()->can('risk-levels.destroy')) {
+                if (auth()->user()->can('threat-scenarios.destroy')) {
                     $a .= '<button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete(' . $query->id . ', \'' . $name . '\')" data-toggle="tooltip" data-placement="top" title="Delete ' . $name . ' ??"><i class="ri-delete-bin-2-fill"></i></button> ';
                 }
                 return $a;
             })
-            ->rawColumns(['color', 'risk_score', 'actions'])
+            ->rawColumns(['action'])
             ->setRowId('id');
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(RiskLevel $model): QueryBuilder
+    public function query(ThreatScenario $model): QueryBuilder
     {
         return $model->newQuery()->orderBy('id', 'desc');
     }
@@ -58,7 +56,7 @@ class RiskLevelsDataTable extends DataTable
      */
     public function html(): HtmlBuilder
     {
-        if (auth()->user()->can('risk-levels.create')) {
+        if (auth()->user()->can('threat-scenarios.create')) {
             $buttons[] = Button::make('add');
         }
         $buttons[] = [
@@ -69,11 +67,9 @@ class RiskLevelsDataTable extends DataTable
             Button::make('reload'),
         ];
         return $this->builder()
-            ->setTableId('RiskLevel-DataTable')
+            ->setTableId('ThreatScenario-DataTable')
             ->columns($this->getColumns())
-            ->orderBy(0, 'desc')
-            // ->minifiedAjax()
-            // ->dom('Bfrtip')
+            ->orderBy(0, 'asc')
             ->buttons($buttons);
     }
 
@@ -83,14 +79,11 @@ class RiskLevelsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            // Column::make('serial_number')->title(trans('admin_fields.serial_number')),
-            Column::make('risk_score')->title(trans('admin_fields.risk_score')),
-            Column::make('level')->title(trans('admin_fields.risk_level')),
-            // Column::make('score_min')->title(trans('admin_fields.score_min')),
-            // Column::make('score_max')->title(trans('admin_fields.score_max')),
-            // Column::make('color')->title(trans('admin_fields.color')),
-            Column::make('action')->title(trans('admin_fields.action_required')),
-            Column::computed('actions')
+            Column::make('serial_number')->title(trans('admin_fields.serial_number')),
+            Column::make('type')->title(trans('admin_fields.threat_to')),
+            Column::make('name')->title(trans('admin_fields.threat_type')),
+            Column::make('definition')->title(trans('admin_fields.definition')),
+            Column::computed('action')
                 ->title(trans(key: 'admin_fields.action'))
                 ->exportable(false)
                 ->printable(false)
@@ -103,6 +96,6 @@ class RiskLevelsDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'RiskLevels_' . date('YmdHis');
+        return 'ThreatScenarios_' . date('YmdHis');
     }
 }
